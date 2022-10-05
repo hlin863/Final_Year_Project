@@ -7,6 +7,10 @@ serverPort = 8080
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
+        """
+        Initialises the webpage
+        """
+
         select_file_html = "<p>Click on the \"Choose File\" button to upload a file:</p><form action=\"/action_page.php\"><input type=\"file\" id=\"myFile\" name=\"filename\"><input type=\"submit\"></form>"
         self.send_response(200)
         self.send_header("Content-type", "text/html")
