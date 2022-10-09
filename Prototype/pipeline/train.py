@@ -1,6 +1,7 @@
 from datetime import datetime
 from urllib.request import urlopen
 
+# reference: https://bodywork.readthedocs.io/en/latest/quickstart_ml_pipeline/
 # other imports
 # ...
 import pandas as pd # import the library to download the dataset
@@ -8,8 +9,7 @@ from sklearn.ensemble import RandomForestClassifier # import the random forest c
 from sklearn.model_selection import train_test_split # import the library to train the model
 import joblib # import the library to persist the model
 
-DATA_URL = ('http://bodywork-ml-pipeline-project.s3.eu-west-2.amazonaws.com'
-            '/data/iris_classification_data.csv')
+DATA_URL = ('http://bodywork-ml-pipeline-project.s3.eu-west-2.amazonaws.com/data/iris_classification_data.csv')
 
 # other constants
 # ...
@@ -36,6 +36,7 @@ def pre_process_data(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Pre-process the data."""
     print('Pre-processing data...')
     features = data.drop('species', axis=1)
+    print(features.head(5)) # test displays the first 5 rows of the features
     labels = data['species']
     return features, labels
 
@@ -53,6 +54,7 @@ def persist_model(model: RandomForestClassifier) -> None:
     print('Persisting model...')
     model_name = f'iris-classification-model.pkl'
     model_path = 'iris-classification-model.pkl'
+    # path reference: https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/
     joblib.dump(model, model_path)
     print(f'Model persisted to {model_path}.')
 
