@@ -23,10 +23,6 @@ def main() -> None:
     features, labels = pre_process_data(data)
     train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.2) # split the feature and the labels into training and testing sets
     
-    print(train_features[0 : 5])
-
-    print(train_labels[0 : 5])
-    
     trained_model = train_model(train_features, train_labels)
 
     print("Accuracy score: {}".format(trained_model.score(test_features, test_labels))) # print the accuracy of the model
@@ -60,9 +56,7 @@ def pre_process_data(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     ] # define the features columns
 
     features = data[features_columns].values # create the features dataframe
-
-    # features = data.drop('species', axis=1)
-
+    
     species_to_digits_map = {
         'setosa': 0,
         'versicolor': 1,
@@ -85,20 +79,22 @@ def train_model(features: pd.DataFrame, labels: pd.DataFrame) -> RandomForestCla
 def persist_model(model: RandomForestClassifier) -> None:
     """Persist the model to the same AWS S3 bucket that contains the original data."""
     print('Persisting model...')
-    model_filename = 'iris-classification-model.pkl'
+    model_filename = 'iris-classification-model.joblib'
     model_path = 'iris-classification-model.pkl'
     # path reference: https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/
     joblib.dump(model, model_path)
     print(f'Model persisted to {model_path}.')
 
     # Upload Model to AWS S3
-    aws_s3_name = 'bodywork-ml-pipeline-project'
+    aws_s3_name = 'finalyearprojectbucket'
 
     try:
         aws_s3_client = aws.client('s3')
-        aws_s3_client.upload_file(model_filename, aws_s3_name, f'models/{model_filename}')
+        aws_s3_client.upload_file(model_filename, aws_s3_name, model_filename)
     except Exception as e:
         print('Error uploading model to AWS S3')
+        print(e)
+        
 
 def test_persist_model():
     with open('iris-classification-model.pkl', 'rb') as f:
