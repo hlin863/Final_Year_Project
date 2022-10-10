@@ -90,17 +90,18 @@ def persist_model(model: RandomForestClassifier) -> None:
 
     try:
         aws_s3_client = aws.client('s3')
+        # reference: https://stackoverflow.com/questions/36272286/getting-access-denied-when-calling-the-putobject-operation-with-bucket-level-per
         aws_s3_client.upload_file(model_filename, aws_s3_name, model_filename)
     except Exception as e:
         print('Error uploading model to AWS S3')
         print(e)
+
+    print("Model uploaded to AWS S3 SUCCESSFULLY")
         
 
 def test_persist_model():
     with open('iris-classification-model.pkl', 'rb') as f:
         data = pickle.load(f)
-
-        print(data)
 
 
 if __name__ == '__main__':
