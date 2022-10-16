@@ -22,3 +22,6 @@ from azureml.pipeline.core import Pipeline
 
 # check core SDK version number
 print("Azure ML SDK Version: ", azureml.core.VERSION)
+
+# Create a workspace object from the existing Azure Machine Learning workspace.
+workspace = Workspace.from_config()
