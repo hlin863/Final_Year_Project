@@ -14,6 +14,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
 
+# Generate a random constant SEED for reproducibility
+SEED = 42
+
 def divide_data(df, features):
     """
     Divide the data into numeric and categorical sets
@@ -34,11 +37,34 @@ def create_pipeline(data, model_name):
     :param model: The model to be used in the pipeline.
     :return: The pipeline.
     """
-    
+
+    pipe = Pipeline([
+    ('feature_extractor', FeatureExtractor()), 
+    ('cat_imputer', Imputer(categorical_set)), 
+    ('cardinality_reducer', CardinalityReducer(categorical_set, threshold=0.1)),
+    ('encoder', Encoder(categorical_set)),
+    ('num_imputer', Imputer(numerical_set, method='mean')), 
+    ('feature_selector', RFE(LogisticRegression(random_state=SEED, max_iter=500), n_features_to_select=8)), 
+    ('model', LogisticRegression(random_state=SEED, max_iter=500))
+    ]) # create the pipeline for the data and model
+
+    X_train = data[0] # get the training data
+    X_test = data[1] # get the testing data
+    y_train = data[2] # get the training labels
+    y_test = data[3] # get the testing labels
+
     # check if the regression model needs importing.
     if model_name == 'LinearRegression':
         from sklearn.linear_model import LinearRegression
         model = LinearRegression()
+
+        model.fit(X_train, y_train) # fit the model to the training data
+
+        # calculate a score for the model
+        score = model.score(X_test, y_test)
+
+        # print the score
+        print('The score for the {} model is: {}'.format(model_name, score))
     
     print("Creating pipeline...")
 
@@ -70,3 +96,5 @@ X_train, X_test, y_train, y_test = train_test_split(df.drop(columns = target_col
 
 print(f"Training features shape: {X_train.shape}") # display the shape of the training features
 print(f"Test features shape: {X_test.shape}") # display the shape of the testing features
+
+create_pipeline([X_train, X_test, y_train, y_test], "LinearRegression")
