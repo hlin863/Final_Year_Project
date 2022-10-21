@@ -6,6 +6,8 @@ from sklearn.datasets import fetch_openml
 # example 2: titanic dataset
 from seaborn import load_dataset
 
+from sklearn.model_selection import train_test_split # import the train_test_split function from sklearn to divide the data into training and testing sets.
+
 def divide_data(df, features):
     """
     Divide the data into numeric and categorical sets
@@ -55,5 +57,11 @@ Test by displaying the numerical and categorical sets
 print(numerical_set[: 5]) # display the first 5 numerical columns
 print(categorical_set[: 5]) # display the first 5 categorical columns
 
+print(numerical_set) # display the entire numerical dataset. 
+
 # create_pipeline(data, "LinearRegression")
 
+X_train, X_test, y_train, y_test = train_test_split(df.drop(columns = target_column), df[target_column], test_size=0.2, random_state=42) # divide the data into training and testing sets.
+
+print(f"Training features shape: {X_train.shape}") # display the shape of the training features
+print(f"Test features shape: {X_test.shape}") # display the shape of the testing features
