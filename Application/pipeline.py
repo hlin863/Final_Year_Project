@@ -6,13 +6,19 @@ from sklearn.datasets import fetch_openml
 # example 2: titanic dataset
 from seaborn import load_dataset
 
+import pandas as pd # import the pandas library. 
+import numpy as np # import the numpy library.
+
 from sklearn.model_selection import train_test_split # import the train_test_split function from sklearn to divide the data into training and testing sets.
 
-# The list of libraries for Machine learning pipeline
-from transformers import FeatureExtractor, Imputer, CardinalityReducer, Encoder
 from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
+
+from imputer import Imputer
+from scaler import Scaler
+from encoder import Encoder  
+
 
 # Generate a random constant SEED for reproducibility
 SEED = 42
@@ -24,9 +30,9 @@ def divide_data(df, features):
     :param features: The features to be used in the model
     :return: The numeric and categorical dataframes
     """
-    numerical_set = df[features].select_dtypes('number').columns # select the numerical features
+    numerical_set = df.select_dtypes(include='number').columns # get the numerical features
 
-    categorical_set = df[features].select_dtypes('object').columns # select the categorical features
+    categorical_set = pd.Index(np.setdiff1d(features, numerical_set)) # select the categorical features
 
     return numerical_set, categorical_set # return the numerical and categorical sets
 
@@ -39,13 +45,11 @@ def create_pipeline(data, model_name):
     """
 
     pipe = Pipeline([
-    ('feature_extractor', FeatureExtractor()), 
-    ('cat_imputer', Imputer(categorical_set)), 
-    ('cardinality_reducer', CardinalityReducer(categorical_set, threshold=0.1)),
+    ('num_imputer', Imputer(numerical_set, method='mean')),
+    ('scaler', Scaler(numerical_set)),
+    ('cat_imputer', Imputer(categorical_set)),
     ('encoder', Encoder(categorical_set)),
-    ('num_imputer', Imputer(numerical_set, method='mean')), 
-    ('feature_selector', RFE(LogisticRegression(random_state=SEED, max_iter=500), n_features_to_select=8)), 
-    ('model', LogisticRegression(random_state=SEED, max_iter=500))
+    ('model', LogisticRegression())
     ]) # create the pipeline for the data and model
 
     X_train = data[0] # get the training data
@@ -85,8 +89,8 @@ numerical_set, categorical_set = divide_data(df, features) # function to divide 
 Test by displaying the numerical and categorical sets
 """
 
-print(numerical_set[: 5]) # display the first 5 numerical columns
-print(categorical_set[: 5]) # display the first 5 categorical columns
+print("Numerical set: ", numerical_set) # display the first 5 numerical columns
+print("Categorical set: ", categorical_set) # display the first 5 categorical columns
 
 print(numerical_set) # display the entire numerical dataset. 
 
