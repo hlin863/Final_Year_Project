@@ -8,6 +8,12 @@ from seaborn import load_dataset
 
 from sklearn.model_selection import train_test_split # import the train_test_split function from sklearn to divide the data into training and testing sets.
 
+# The list of libraries for Machine learning pipeline
+from transformers import FeatureExtractor, Imputer, CardinalityReducer, Encoder
+from sklearn.pipeline import Pipeline
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+
 def divide_data(df, features):
     """
     Divide the data into numeric and categorical sets
@@ -36,7 +42,6 @@ def create_pipeline(data, model_name):
     
     print("Creating pipeline...")
 
-# data = fetch_openml('mnist_784', version=1, return_X_y=True)
 
 data = load_dataset('titanic') # get the data 
 
