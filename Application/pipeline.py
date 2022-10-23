@@ -92,13 +92,43 @@ Test by displaying the numerical and categorical sets
 print("Numerical set: ", numerical_set) # display the first 5 numerical columns
 print("Categorical set: ", categorical_set) # display the first 5 categorical columns
 
-print(numerical_set) # display the entire numerical dataset. 
+print(numerical_set) # display the entire numerical dataset.
+
+# remove the survived column from the numeric set
+numerical_set = numerical_set.drop('survived')
+# drop 'pclass', 'age', 'sibsp', 'parch', 'fare'
+numerical_set = numerical_set.drop('pclass')
+numerical_set = numerical_set.drop('age')
+numerical_set = numerical_set.drop('sibsp')
+numerical_set = numerical_set.drop('parch')
+numerical_set = numerical_set.drop('fare')
+
+categorical_set = categorical_set.drop('deck') # remove the deck column from the categorical set
+categorical_set = categorical_set.drop('embark_town') # remove the embark_town column from the categorical set
+categorical_set = categorical_set.drop('sex') # remove the gender column from the categorical set
 
 # create_pipeline(data, "LinearRegression")
 
 X_train, X_test, y_train, y_test = train_test_split(df.drop(columns = target_column), df[target_column], test_size=0.2, random_state=42) # divide the data into training and testing sets.
 
+X_train_numeric = X_train[numerical_set] # get the training data for the numerical set
+X_test_numeric = X_test[numerical_set] # get the testing data for the numerical set
+
+y_train_numeric = y_train[numerical_set] # get the training labels for the numerical set
+y_test_numeric = y_test[numerical_set] # get the testing labels for the numerical set
+
+y_train_categorical = y_train[categorical_set] # get the training labels for the categorical set
+y_test_categorical = y_test[categorical_set] # get the testing labels for the categorical set
+
+X_train_categorical = X_train[categorical_set] # get the training data for the categorical set
+X_test_categorical = X_test[categorical_set] # get the testing data for the categorical set
+
+print(X_train_numeric.head()) # display the first 5 rows of the training data for the numerical set
+
 print(f"Training features shape: {X_train.shape}") # display the shape of the training features
 print(f"Test features shape: {X_test.shape}") # display the shape of the testing features
 
-create_pipeline([X_train, X_test, y_train, y_test], "LinearRegression")
+"""
+create_pipeline([X_train_numeric, X_test_numeric, y_train_numeric, y_test_numeric], "LinearRegression") # create a pipeline for numeric factors.
+create_pipeline([X_train_categorical, X_test_categorical, y_train_categorical, y_test_categorical], "LogisticRegression") # create a pipeline for categorical factors.
+"""
